@@ -261,6 +261,11 @@ in
         "network.target"
       ];
       wantedBy = [ "multi-user.target" ];
+      preStart = ''
+        ${pkgs.envsubst}/bin/envsubst \
+          -i ${configurationYaml} \
+          -o /run/dendrite/dendrite.yaml
+      '';
       serviceConfig = {
         Type = "simple";
         DynamicUser = true;
@@ -271,11 +276,6 @@ in
         LimitNOFILE = 65535;
         EnvironmentFile = lib.mkIf (cfg.environmentFile != null) cfg.environmentFile;
         LoadCredential = cfg.loadCredential;
-        ExecStartPre = ''
-          ${pkgs.envsubst}/bin/envsubst \
-            -i ${configurationYaml} \
-            -o /run/dendrite/dendrite.yaml
-        '';
         ExecStart = lib.strings.concatStringsSep " " ([
           "${pkgs.dendrite}/bin/dendrite-monolith-server"
           "--config /run/dendrite/dendrite.yaml"
