@@ -143,12 +143,24 @@ in
             '';
           };
         };
-        options.federation_api.database = {
-          connection_string = lib.mkOption {
-            type = lib.types.str;
-            default = "file:federationapi.db";
+        options.federation_api = {
+          database = {
+            connection_string = lib.mkOption {
+              type = lib.types.str;
+              default = "file:federationapi.db";
+              description = ''
+                Database for the Federation API.
+              '';
+            };
+          };
+          key_perspectives = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            example = [ "matrix.org" ];
+            default = [ "matrix.org" "vector.im" ];
             description = ''
-              Database for the Federation API.
+              Perspective keyservers to use as a backup when direct key fetches fail. This may
+              be required to satisfy key requests for servers that are no longer online when
+              joining some rooms.
             '';
           };
         };
